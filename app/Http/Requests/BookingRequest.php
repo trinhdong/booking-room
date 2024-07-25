@@ -55,16 +55,4 @@ class BookingRequest extends FormRequest
 
         throw new HttpResponseException(response()->json($response, 422));
     }
-
-    public function validateBookingData(array $data): array
-    {
-        $validator = Validator::make($data, $this->rules(), $this->messages());
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return ['success' => false, 'message' => $errors];
-        }
-
-        return ['success' => true, 'data' => $data];
-    }
 }

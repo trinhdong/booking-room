@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Http\Requests\BookingRequest;
+use App\Http\Requests\BookingBulkRequest;
 use App\Interfaces\BookingRepositoryInterface;
 use App\Interfaces\SpaceRepositoryInterface;
 
@@ -50,7 +50,7 @@ class BookingService
 
     private function checkAndCreateBooking(array $bookingData)
     {
-        $validationResult = (new BookingRequest)->validateBookingData($bookingData);
+        $validationResult = (new BookingBulkRequest)->validateBookingData($bookingData);
         if (!$validationResult['success']) {
             return $validationResult;
         }
@@ -64,6 +64,8 @@ class BookingService
             return ['success' => false, 'message' => 'The room is already booked for the specified time range.'];
         }
 
+        $bookingData['space_id'] = intval($bookingData['space_id'] ?? $spacesInRoom[0]);
+        unset($bookingData['room_id']);
         $booking = $this->bookingRepository->create($bookingData);
         return ['success' => true, 'data' => $booking];
     }
